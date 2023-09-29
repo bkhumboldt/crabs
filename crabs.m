@@ -7,9 +7,8 @@ function crabs ()
 
   % Initialize captain location,  heading and size
     xCapt   = 1000;
-    yCapt  = 500;
-    % thetaCapt  = -pi/2;
-    thetaCapt = 90;
+    yCapt  = 1000;
+    thetaCapt  = -pi/2;
     sizeCapt  =  50;
 
   % Draw the captain and initialize graphics handles
@@ -17,9 +16,28 @@ function crabs ()
   % Put your call to  drawCapt() here ….. You must give drawCapt its
    % input and output arguments.
 
-   drawCapt(xCapt, yCapt, thetaCapt, sizeCapt);
+   captainLines = drawCapt(xCapt, yCapt, thetaCapt, sizeCapt);
 
 %*******************************************************
+
+  while(true)
+    for i = captainLines
+      delete(i);
+    endfor
+
+    thetaCapt = getMouseAngle(xCapt, yCapt);
+
+    captainLines = drawCapt(xCapt, yCapt, thetaCapt, sizeCapt);
+
+    C = kbhit(1);
+    if(C == 'q')
+      break;
+    endif
+
+    pause(0.017);
+  endwhile
+
+  close;
 
 endfunction
 
