@@ -16,25 +16,31 @@ function crabs ()
   % Put your call to  drawCapt() here ….. You must give drawCapt its
    % input and output arguments.
 
-   captainLines = drawCapt(xCapt, yCapt, thetaCapt, sizeCapt);
+   captGraphics = drawCapt(xCapt, yCapt, thetaCapt, sizeCapt);
 
 %*******************************************************
 
-  while(true)
-    for i = captainLines
-      delete(i);
-    endfor
+  cmd = "null"; % initial command
 
-    thetaCapt = getMouseAngle(xCapt, yCapt);
+  while ( cmd != "Q") % While not quit, read keyboard and respond
 
-    captainLines = drawCapt(xCapt, yCapt, thetaCapt, sizeCapt);
+    cmd = kbhit(); % Read the keyboard.
 
-    C = kbhit(1);
-    if(C == 'q')
-      break;
+    if( cmd == "w" || cmd == "a" || cmd == "d" ) %Captain has moved. Respond.
+
+      % erase old captain
+      for i=1:length( captGraphics )
+        set( captGraphics(i), 'Visible', 'off' );
+      endfor
+
+      % move capt
+      [xCapt, yCapt, thetaCapt] = moveCapt(cmd, xCapt, yCapt, thetaCapt);
+
+      % draw new capt
+      captGraphics = drawCapt( xCapt, yCapt, thetaCapt, sizeCapt);
+
     endif
 
-    pause(0.017);
   endwhile
 
   close;
