@@ -1,49 +1,63 @@
 function crabs ()
-% Crabs is a kids computer game where a fisherman,  called the captain,
-% hunts for a very clever and powerful crab.
 
- % Draw the game map and initialize map dimensions.
-   [mapHeight , mapWidth] = drawMap( "BGImage.png" );
+  %initialize command and map dimensions and draw map
+   cmd = "null";
+   [mapHeight,mapWidth] = drawMap("BGImage.png");
 
-  % Initialize captain location,  heading and size
-    xCapt   = 1000;
-    yCapt  = 1000;
-    thetaCapt  = -pi/2;
-    sizeCapt  =  50;
+  %initialize captain location, heading and size
+    xCapt = 1000;
+    yCapt = 500;
+    thetaCapt = -pi/2;
+    sizeCapt = 50;
 
-  % Draw the captain and initialize graphics handles
-%*********************************************************
-  % Put your call to  drawCapt() here ….. You must give drawCapt its
-   % input and output arguments.
+  %initialize crab location, heading and size
+    xCrab = 1000;
+    yCrab = 1200;
+    thetaCrab = -pi/2;
+    sizeCrab = 50;
 
-   captGraphics = drawCapt(xCapt, yCapt, thetaCapt, sizeCapt);
+    %draw initial captain and crab
+    captGraphics = drawCapt(xCapt,yCapt,thetaCapt,sizeCapt);
+    crabGraphics = drawCrab(xCrab,yCrab,thetaCrab,sizeCrab);
 
-%*******************************************************
+%%%%%          main loop       %%%%%%%%%%
 
-  cmd = "null"; % initial command
+  while ( cmd != "Q") % while not quit read keyboard and respond
 
-  while ( cmd != "Q") % While not quit, read keyboard and respond
+    %read the keyboard.
+     cmd = kbhit();
 
-    cmd = kbhit(); % Read the keyboard.
+     if( cmd == "w" || cmd == "a" || cmd == "d" ) %respond to keyboard. captain has moved
 
-    if( cmd == "w" || cmd == "a" || cmd == "d" ) %Captain has moved. Respond.
+       %erase old captain
+        for i=1:length(captGraphics)
+          delete(captGraphics(i));
+        endfor
 
-      % erase old captain
-      for i=1:length( captGraphics )
-        set( captGraphics(i), 'Visible', 'off' );
-      endfor
+        %move capt
+        [xCapt,yCapt,thetaCapt] = moveCapt(cmd,xCapt,yCapt,thetaCapt,sizeCapt, mapHeight, mapWidth);
 
-      % move capt
-      [xCapt, yCapt, thetaCapt] = moveCapt(cmd, xCapt, yCapt, thetaCapt);
+        %draw new capt
+        captGraphics = drawCapt(xCapt,yCapt,thetaCapt,sizeCapt);
 
-      % draw new capt
-      captGraphics = drawCapt( xCapt, yCapt, thetaCapt, sizeCapt);
+ elseif (cmd == "i" || cmd == "j" || cmd == "k" || cmd == "l" || cmd ==",") % respond crab moved
 
-    endif
+        %erase old crab
+        for i=1:length(crabGraphics)
+          delete(crabGraphics(i));
+        endfor
 
-  endwhile
+        %move crab
+        [xCrab,yCrab,thetaCrab] = moveCrab(cmd,xCrab,yCrab,thetaCrab,sizeCrab, mapHeight, mapWidth);
 
-  close;
+        %draw new captain and crab
+        crabGraphics = drawCrab(xCrab,yCrab,thetaCrab,sizeCrab)
+ endif
+
+endwhile
+
+close all
+clear
 
 endfunction
 

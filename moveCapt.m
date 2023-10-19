@@ -1,4 +1,4 @@
-function [ xCapt, yCapt, thetaCapt ] = moveCapt( cmd, x, y, theta );
+function [ xCapt, yCapt, thetaCapt ] = moveCapt( cmd, x, y, theta, size, height, width);
 
   dTheta = pi/6;
   dStep = 50;
@@ -23,6 +23,14 @@ function [ xCapt, yCapt, thetaCapt ] = moveCapt( cmd, x, y, theta );
     yCapt = y;
     thetaCapt = theta;
 
+  endif
+
+  if(xCapt < size || xCapt > width-size)
+    xCapt = x;
+  endif
+
+  if(yCapt < size || yCapt > height-size)
+    yCapt = y;
   endif
 
 endfunction
