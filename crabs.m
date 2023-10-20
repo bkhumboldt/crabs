@@ -1,4 +1,4 @@
-function crabs ()
+function crabs (level)
 
   %initialize command and map dimensions and draw map
    cmd = "null";
@@ -16,16 +16,37 @@ function crabs ()
     thetaCrab = -pi/2;
     sizeCrab = 50;
 
+    % init jellyfish values
+    xJelly = rand*mapWidth;
+    yJelly = 0;
+    thetaJelly = -pi/2;
+    sizeJelly = 25;
+
     %draw initial captain and crab
     captGraphics = drawCapt(xCapt,yCapt,thetaCapt,sizeCapt);
     crabGraphics = drawCrab(xCrab,yCrab,thetaCrab,sizeCrab);
+    jellyGraphics = drawJelly(xJelly, yJelly, thetaJelly, sizeJelly);
 
 %%%%%          main loop       %%%%%%%%%%
 
-  while ( cmd != "Q") % while not quit read keyboard and respond
+  while (1) % while not quit read keyboard and respond
+
+    % erase old jellyfish
+    for i=1:length(jellyGraphics)
+      delete(jellyGraphics(i));
+    endfor
+
+    % move jellyfish
+    [xJelly,yJelly,thetaJelly] = moveJelly(level, xJelly, yJelly,thetaJelly, sizeJelly, mapHeight,mapWidth);
+
+    % draw jellyfish
+    jellyGraphics = drawJelly(xJelly,yJelly,thetaJelly,sizeJelly);
 
     %read the keyboard.
-     cmd = kbhit();
+     cmd = kbhit(1);
+     if(cmd == "q")
+      break;
+     endif
 
      if( cmd == "w" || cmd == "a" || cmd == "d" ) %respond to keyboard. captain has moved
 
@@ -53,6 +74,9 @@ function crabs ()
         %draw new captain and crab
         crabGraphics = drawCrab(xCrab,yCrab,thetaCrab,sizeCrab)
  endif
+
+ fflush(stdout);
+ pause(0.01);
 
 endwhile
 
