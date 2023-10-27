@@ -55,11 +55,19 @@ captPt12 = [   0;  -2*captSize; 1]; %right
 %spear
 captPt13=[ 3*captSize; -2*captSize; 1];  % spear point
 captPt14=[    -captSize; -2*captSize; 1];  % spear end
+captPt15=[ 3*captSize; -4*captSize; 1];
+captPt16=[ 5*captSize; -4*captSize; 1];
+captPt17=[ 5*captSize; -2*captSize; 1];
+captPt18=[ 5*captSize; 0; 1];
+captPt19=[ 3*captSize; 0; 1];
+captPt20=[ 4*captSize; -2*captSize; 1];
+
 
 
 %captain matrix
 capt = [ captPt1, captPt2, captPt3,  captPt4,    captPt5,   captPt6,   captPt7, ...
-              captPt8, captPt9, captPt10, captPt11, captPt12, captPt13, captPt14];
+         captPt8, captPt9, captPt10, captPt11, captPt12, captPt13, captPt14, ...
+         captPt15, captPt16, captPt17, captPt18, captPt19, captPt20];
 
 endfunction
 
