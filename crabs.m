@@ -1,4 +1,6 @@
 function crabs (level)
+  numCrabs = level;
+  numJelly = level;
 
   %initialize command and map dimensions and draw map
    cmd = "null";
@@ -16,23 +18,30 @@ function crabs (level)
     yNet = -100;
 
   %initialize crab location, heading and size
-    xCrab = 1000;
-    yCrab = 1200;
-    thetaCrab = -pi/2;
+    xCrab = rand(1,numCrabs)*mapWidth;
+    yCrab = 3*mapHeight/4 + rand(1,numCrabs)*mapHeight/4;
+    thetaCrab = ones(1,numCrabs)*(-pi/2);
+    crabsCaught = 0;
     sizeCrab = 50;
+    isCrabCaught = zeros(1,numCrabs);
 
     % init jellyfish values
-    xJelly = rand*mapWidth;
-    yJelly = 0;
+    xJelly = rand(1,numJelly)*mapWidth;
+    yJelly = rand(1,numJelly)*mapHeight;
     thetaJelly = -pi/2;
     sizeJelly = 25;
     jellySting = 2;
 
     %draw initial captain and crab
     captGraphics = drawCapt(xCapt,yCapt,thetaCapt,sizeCapt);
-    crabGraphics = drawCrab(xCrab,yCrab,thetaCrab,sizeCrab);
-    jellyGraphics = drawJelly(xJelly, yJelly, thetaJelly, sizeJelly);
+    %draw crabs
+    for k=1:numCrabs
+      crabGraphics(:,k) = drawCrab(xCrab(k),yCrab(k),thetaCrab(k),sizeCrab);
+    endfor
 
+    for j=1:numJelly
+      jellyGraphics(:,j) = drawJelly(xJelly(j), yJelly(j), thetaJelly, sizeJelly);
+    endfor
 %%%%%          main loop       %%%%%%%%%%
 
 healthLoc = [100,100];
@@ -55,21 +64,24 @@ strcat('Crabs Caught = ',num2str(crabsCaught)), 'FontSize', 12, 'Color', 'red');
 
 
     % erase old jellyfish
-    for i=1:length(jellyGraphics)
-      delete(jellyGraphics(i));
+    for j=1:numJelly
+      for i=1:length(jellyGraphics(:,j))
+        delete(jellyGraphics(i,j));
+      endfor
+
+      [xJelly(j),yJelly(j),thetaJelly] = moveJelly(level, xJelly(j), yJelly(j),thetaJelly, sizeJelly, mapHeight,mapWidth);
+
+      % draw jellyfish
+      jellyGraphics(:,j) = drawJelly(xJelly(j),yJelly(j),thetaJelly,sizeJelly);
+
+      if(getDist(xJelly(j),yJelly(j),xCapt,yCapt) <= 3*sizeCapt)
+        healthCapt -= jellySting;
+      endif
+
     endfor
-
-    % move jellyfish
-    [xJelly,yJelly,thetaJelly] = moveJelly(level, xJelly, yJelly,thetaJelly, sizeJelly, mapHeight,mapWidth);
-
-    % draw jellyfish
-    jellyGraphics = drawJelly(xJelly,yJelly,thetaJelly,sizeJelly);
 
     %read the keyboard.
      cmd = kbhit(1);
-     if(cmd == "q")
-      break;
-     endif
 
      if( cmd == "w" || cmd == "a" || cmd == "d" ) %respond to keyboard. captain has moved
 
@@ -84,41 +96,22 @@ strcat('Crabs Caught = ',num2str(crabsCaught)), 'FontSize', 12, 'Color', 'red');
         %draw new capt
         [captGraphics, xNet, yNet] = drawCapt(xCapt,yCapt,thetaCapt,sizeCapt);
 
- elseif (cmd == "i" || cmd == "j" || cmd == "k" || cmd == "l" || cmd ==",") % respond crab moved
+endif
 
+    for k=1:numCrabs
+      if( !isCrabCaught(k) && getDist(xNet,yNet,xCrab(k),yCrab(k)) < 2*sizeCapt ) %crab is caught
+        crabsCaught = crabsCaught + 1;
+        isCrabCaught(k) = 1;
         %erase old crab
-        for i=1:length(crabGraphics)
-          delete(crabGraphics(i));
+        for i=1:length(crabGraphics(:,k))
+          delete(crabGraphics(i,k));
         endfor
+      endif
+    endfor
 
-        %move crab
-        [xCrab,yCrab,thetaCrab] = moveCrab(cmd,xCrab,yCrab,thetaCrab,sizeCrab, mapHeight, mapWidth);
 
-        %draw new captain and crab
-        crabGraphics = drawCrab(xCrab,yCrab,thetaCrab,sizeCrab)
- endif
-    %crab is caught
-    if( getDist(xNet,yNet,xCrab,yCrab) < 2*sizeCapt )
-      %keep track of how many crabs are caught
-      crabsCaught++;
-
-      %erase old crab
-      for i=1:length(crabGraphics)
-        delete(crabGraphics(i));
-      endfor
-
-      %create a new crab. initialize new crab location, heading and size
-      xCrab = rand*mapWidth;
-      yCrab = rand*mapHeight;
-      thetaCrab = -pi/2;
-      sizeCrab = 50;
-
-      %draw new crab
-      crabGraphics = drawCrab(xCrab,yCrab,thetaCrab,sizeCrab);
-    endif
-
-    if(getDist(xJelly,yJelly,xCapt,yCapt) <= 3*sizeCapt)
-      healthCapt -= jellySting;
+    if(cmd == "q" || crabsCaught >= numCrabs || healthCapt <= 0)
+      break;
     endif
 
  fflush(stdout);
