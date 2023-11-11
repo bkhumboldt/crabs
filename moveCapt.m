@@ -3,27 +3,23 @@ function [ xCapt, yCapt, thetaCapt ] = moveCapt( cmd, x, y, theta, size, height,
   dTheta = pi/6;
   dStep = 50;
 
-  if( cmd == "w" ) %move forward
+  xCapt = x;
+  yCapt = y;
+  thetaCapt = theta;
+
+  if( cmd(1) )% == "w" ) %move forward
     xCapt = x + (dStep * cos(theta));
     yCapt = y + (dStep * sin(theta));
-    thetaCapt = theta;
-
-  elseif ( cmd == "d" ) %turn right
-    xCapt = x;
-    yCapt = y;
-    thetaCapt = theta + dTheta;
-
-  elseif ( cmd == "a" ) %turn left
-    xCapt = x;
-    yCapt = y;
-    thetaCapt = theta - dTheta;
-
-  else % if none of the cases are true, set the new variables equal to the old inputs.
-    xCapt = x;
-    yCapt = y;
-    thetaCapt = theta;
-
   endif
+
+  if ( cmd(4) ) % == "d" ) %turn right
+    thetaCapt = theta + dTheta;
+  endif
+
+  if ( cmd(2) ) % == "a" ) %turn left
+    thetaCapt = theta - dTheta;
+  endif
+  % if none of the cases are true, set the new variables equal to the old inputs.
 
   if(xCapt < size || xCapt > width-size)
     xCapt = x;

@@ -6,6 +6,12 @@ function crabs (level)
    cmd = "null";
    [mapHeight,mapWidth] = drawMap("BGImage.png");
 
+   KeyNames = {'w', 'a', 's', 'd'};
+   KeyStatus = false(1,length(KeyNames));
+
+   set(gcf, 'KeyPressFcn', @stl_KeyDown);
+   set(gcf, 'KeyReleaseFcn', @stl_KeyUp);
+
   %initialize captain location, heading and size
     xCapt = 1000;
     yCapt = 500;
@@ -81,9 +87,10 @@ strcat('Crabs Caught = ',num2str(crabsCaught)), 'FontSize', 12, 'Color', 'red');
     endfor
 
     %read the keyboard.
-     cmd = kbhit(1);
+     % cmd = kbhit(1);
 
-     if( cmd == "w" || cmd == "a" || cmd == "d" ) %respond to keyboard. captain has moved
+     % if( cmd == "w" || cmd == "a" || cmd == "d" ) %respond to keyboard. captain has moved
+     if(any(KeyStatus))
 
        %erase old captain
         for i=1:length(captGraphics)
@@ -91,7 +98,7 @@ strcat('Crabs Caught = ',num2str(crabsCaught)), 'FontSize', 12, 'Color', 'red');
         endfor
 
         %move capt
-        [xCapt,yCapt,thetaCapt] = moveCapt(cmd,xCapt,yCapt,thetaCapt,sizeCapt, mapHeight, mapWidth);
+        [xCapt,yCapt,thetaCapt] = moveCapt(KeyStatus,xCapt,yCapt,thetaCapt,sizeCapt, mapHeight, mapWidth);
 
         %draw new capt
         [captGraphics, xNet, yNet] = drawCapt(xCapt,yCapt,thetaCapt,sizeCapt);
@@ -115,12 +122,23 @@ endif
     endif
 
  fflush(stdout);
- pause(0.01);
+ pause(0.025);
 
 endwhile
 
 close all
 clear
+
+  function stl_KeyUp(hObject, eventdata, handles)
+    LastKeyStatus = KeyStatus;
+    key = eventdata.Character;
+    KeyStatus = (~strcmp(key, KeyNames) & LastKeyStatus);
+  endfunction
+  function stl_KeyDown(hObject, eventdata, handles)
+    LastKeyStatus = KeyStatus;
+    key = eventdata.Character;
+    KeyStatus = (strcmp(key, KeyNames) | LastKeyStatus);
+  endfunction
 
 endfunction
 
