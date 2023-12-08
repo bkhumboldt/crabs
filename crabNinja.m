@@ -78,8 +78,8 @@ function crabNinja ()
       curTime = toc(stageStartTime);
       while(curTime >= ((CurrentFrameNo) * FRAME_DURATION) && loops < MAX_FRAME_SKIP)
 
-        if(!fishJumping && KeyStatus(6))
-          summonFish(5);
+        if(curTime >= 2 && !fishJumping && (mod(curTime,3) <= 0.02 || KeyStatus(6)))
+          summonFish(floor(rand*5)+3);
         endif
 
         fishJumping = false;
@@ -102,6 +102,11 @@ function crabNinja ()
   endwhile
 
   printf("%s", ["You got a score of ", num2str(score), "!\n"]);
+  highscore = load("highscore.txt", "-", "score");
+  if(score > highscore.score)
+    save highscore.txt score;
+    printf("%s", "NEW HIGH SCORE!\n");
+  endif
 
   close all
   clear
